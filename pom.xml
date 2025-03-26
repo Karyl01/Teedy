@@ -10,6 +10,14 @@
 
   <name>Docs Parent</name>
 
+  <distributionManagement>
+  <site>
+    <id>local-site</id>
+    <url>file://${project.basedir}/target/staging</url>
+  </site>
+  </distributionManagement>
+
+
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
@@ -116,6 +124,12 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>4.0.0-M16</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -124,6 +138,16 @@
     <module>docs-web-common</module>
     <module>docs-web</module>
   </modules>
+
+  <reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-project-info-reports-plugin</artifactId>
+      <version>3.4.1</version> <!-- ✅ 最新稳定可用版本 -->
+    </plugin>
+  </plugins>
+</reporting>
 
   <dependencyManagement>
     <dependencies>
