@@ -10,7 +10,7 @@ import org.junit.Test;
 
 /**
  * Tests the persistance layer.
- * 
+ *
  * @author jtremeaux
  */
 public class TestJpa extends BaseTransactionalTest {
