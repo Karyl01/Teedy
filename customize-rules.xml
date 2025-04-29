@@ -1,27 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="Custom Metrics Ruleset"
+<ruleset name="CS304 rules"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
-         https://pmd.github.io/pmd-6.55.0/ruleset_2_0_0.xsd">
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
     <description>
-        Custom PMD ruleset to evaluate code metrics: LoC, CC, WMC, CBO, and LCOM.
+        Customized rules for CS304
     </description>
 
-    <!-- LoC -->
-    <rule ref="category/java/design.xml/ExcessiveMethodLength"/>
-    <rule ref="category/java/design.xml/ExcessiveClassLength"/>
+    <!--LOC-->
+    <rule ref="category/java/design.xml/NcssCount" />
+    <!--CC-->
+    <rule ref="category/java/design.xml/CyclomaticComplexity" />
+    <!--WMC, LCOM-->
+    <rule ref="category/java/design.xml/GodClass" />
+    <!--CBO-->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects" />
 
-    <!-- Cyclomatic Complexity -->
-    <rule ref="category/java/design.xml/CyclomaticComplexity"/>
 
-    <!-- Weighted Methods per Class -->
-    <rule ref="category/java/design.xml/TooManyMethods"/>
-
-    <!-- Coupling Between Objects -->
-    <rule ref="category/java/design.xml/CouplingBetweenObjects"/>
-
-    <!-- LCOM 替代方案 -->
-    <rule ref="category/java/bestpractices.xml/LooseCoupling"/>
 </ruleset>
