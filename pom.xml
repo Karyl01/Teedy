@@ -10,12 +10,6 @@
 
   <name>Docs Parent</name>
 
-  <distributionManagement>
-  <site>
-    <id>local-site</id>
-    <url>file://${project.basedir}/target/staging</url>
-  </site>
-  </distributionManagement>
 
 
   <properties>
@@ -227,6 +221,14 @@
     </plugin>
   </plugins>
 </reporting>
+
+
+  <distributionManagement>
+    <site>
+        <id>local</id>
+        <url>file:${project.build.directory}/site</url>
+    </site>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>
