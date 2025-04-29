@@ -10,13 +10,6 @@
 
   <name>Docs Parent</name>
 
-  <distributionManagement>
-  <site>
-    <id>local-site</id>
-    <url>file://${project.basedir}/target/staging</url>
-  </site>
-  </distributionManagement>
-
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
@@ -117,6 +110,13 @@
           <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
         </configuration>
+        <!-- <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit47</artifactId>
+            <version>3.5.3</version>
+          </dependency>
+        </dependencies> -->
       </plugin>
 
       <plugin>
@@ -128,31 +128,34 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>4.0.0-M16</version>
+        <version>3.12.1</version>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.maven.doxia</groupId>
+                <artifactId>doxia-site-renderer</artifactId>
+                <version>1.11.1</version>
+            </dependency>
+        </dependencies>
       </plugin>
 
-      <plugin>
+	    <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.21.0</version>
+        <version>3.23.0</version>
         <configuration>
-          <failOnViolation>false</failOnViolation>
           <rulesets>
-            <ruleset>customize-rules.xml</ruleset> <!-- 你可以放在其他目录，但路径要对 -->
+              <ruleset>rulesets.xml</ruleset>
           </rulesets>
+          <failOnViolation>false</failOnViolation> <!-- to not fail the build -->
         </configuration>
         <executions>
           <execution>
-            <phase>verify</phase>
             <goals>
               <goal>check</goal>
-              <goal>pmd</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-
-
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -163,19 +166,125 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
+          <!-- attached to Maven test phase -->
           <execution>
-            <id>report</id>
-            <phase>test</phase>
+          <id>report</id>
+          <phase>test</phase>
             <goals>
               <goal>report</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+        <executions>
+          <execution>
+            <id>aggregate</id>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+            <phase>site</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.4.3</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <includeScope>runtime</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin> -->
     </plugins>
   </build>
+
+
+  <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.23.0</version>
+                <configuration>
+                    <rulesets>
+                        <ruleset>rulesets.xml</ruleset>
+                    </rulesets>
+                </configuration>
+            </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>3.0.0</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>report</report>
+            </reports>
+            <configuration>
+              <aggregate>true</aggregate>
+            </configuration>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.9</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>report-aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <modules>
     <module>docs-core</module>
@@ -183,50 +292,12 @@
     <module>docs-web</module>
   </modules>
 
-  <reporting>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-project-info-reports-plugin</artifactId>
-      <version>3.4.1</version> <!-- ✅ 最新稳定可用版本 -->
-    </plugin>
-
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-pmd-plugin</artifactId>
-      <version>3.21.0</version>
-      <configuration>
-        <rulesets>
-          <ruleset>customize-rules.xml</ruleset>
-        </rulesets>
-      </configuration>
-    </plugin>
-
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-javadoc-plugin</artifactId>
-      <version>3.6.3</version>
-      <configuration>
-        <failOnError>false</failOnError>
-      </configuration>
-      <reportSets>
-        <reportSet>
-          <id>aggregate</id>
-          <inherited>false</inherited>
-          <reports>
-            <report>aggregate</report>
-          </reports>
-        </reportSet>
-        <reportSet>
-          <id>default</id>
-          <reports>
-            <report>javadoc</report>
-          </reports>
-        </reportSet>
-      </reportSets>
-    </plugin>
-  </plugins>
-</reporting>
+  <distributionManagement>
+      <site>
+          <id>local</id>
+          <url>file:${project.build.directory}/site</url>
+      </site>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>
@@ -589,13 +660,6 @@
         <groupId>com.levigo.jbig2</groupId>
         <artifactId>levigo-jbig2-imageio</artifactId>
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>5.7.1</version>
-        <scope>test</scope>
       </dependency>
 
     </dependencies>
