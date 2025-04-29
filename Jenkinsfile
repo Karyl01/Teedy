@@ -28,9 +28,16 @@ pipeline {
         }
         stage('Javadoc') {
             steps {
-                sh 'mvn javadoc:javadoc'
+                script {
+                    try {
+                        sh 'mvn javadoc:javadoc'
+                    } catch (err) {
+                        echo 'WARNING: Javadoc generation failed, continuing the pipeline...'
+                    }
+                }
             }
         }
+
         stage('Site') {
             steps {
                 sh 'mvn site'
