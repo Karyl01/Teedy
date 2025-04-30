@@ -33,7 +33,8 @@ app.post('/login-notify', (req, res) => {
 // ✅ 登出通知接口（新增）
 app.post('/logout-notify', (req, res) => {
   const { username, timestamp } = req.body || {}
-
+  console.log("username: "+ username)
+  console.log("timestamp: "+ timestamp)
   if (!username || !timestamp) {
     console.warn('⚠️ 登出请求缺少 username 或 timestamp')
     return res.status(400).json({ error: 'Missing username or timestamp' })
