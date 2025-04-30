@@ -27,6 +27,18 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
         $rootScope.userInfo = data;
       });
 
+      // 新增：向5173端口发送登录成功通知
+      Restangular
+      .withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setBaseUrl('http://localhost:5173');
+      })
+      .all('login-notify')
+      .customPOST({
+        username: $scope.user.username,
+        timestamp: new Date().toISOString()
+      });
+
+
       if($stateParams.redirectState !== undefined && $stateParams.redirectParams !== undefined) {
         $state.go($stateParams.redirectState, JSON.parse($stateParams.redirectParams))
           .catch(function() {

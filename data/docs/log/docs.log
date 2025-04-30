@@ -1531,3 +1531,5 @@ java.lang.NullPointerException: Cannot invoke "jakarta.persistence.EntityManager
 29 Apr 2025 15:22:11,565 INFO com.sismics.docs.core.service.FileSizeService.startUp(FileSizeService.java:30) File size service starting up 
 29 Apr 2025 15:22:12,391 INFO com.sismics.docs.core.service.FileSizeService.lambda$runOneIteration$0(FileSizeService.java:50) No more file to process, stopping the service 
 29 Apr 2025 15:22:12,395 INFO com.sismics.docs.core.service.FileSizeService.shutDown(FileSizeService.java:35) File size service shutting down 
+29 Apr 2025 15:24:17,353 INFO com.sismics.docs.core.service.InboxService.shutDown(InboxService.java:57) Inbox service shutting down 
+29 Apr 2025 15:24:17,354 INFO com.sismics.docs.core.service.FileService.shutDown(FileService.java:44) File service shutting down 
