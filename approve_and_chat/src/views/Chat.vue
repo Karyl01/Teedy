@@ -6,11 +6,14 @@
       </div>
       <div v-else>
         当前登录用户：<strong>{{ currentUser.username }}</strong> ({{ currentUser.email }} )
+        当前登录用户所属群组：<strong>{{ currentGroup || '未识别' }}</strong>
       </div>
     </header>
+    <GroupList/>
 
     <section v-if="!currentUser.anonymous" class="chat-section">
-      <p>💬 当前为同组聊天功能预留区域（敬请期待）</p>
+      <h2>用户消息面板</h2>
+      <ChatPanel/>
     </section>
 
     <section v-else class="chat-section-disabled">
@@ -21,12 +24,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import GroupList from '@/components/GroupList.vue'
+import ChatPanel from "@/components/ChatPanel.vue";
 
 const currentUser = ref({
   anonymous: true,
   username: '',
   email: ''
 })
+const currentGroup = ref('')
 
 onMounted(async () => {
   try {
@@ -38,7 +44,13 @@ onMounted(async () => {
 
     const data = await response.json()
     currentUser.value = data
-    console.log('[当前用户]', data)
+    localStorage.setItem('currentUser', JSON.stringify(data))
+
+    // ✅ 读取所属群组名
+    const storedGroup = localStorage.getItem('currentGroup')
+    if (storedGroup) {
+      currentGroup.value = storedGroup
+    }
   } catch (err) {
     console.error('获取当前用户失败:', err.message)
   }
