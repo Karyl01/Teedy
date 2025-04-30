@@ -22,10 +22,10 @@ angular.module('docs').controller('Navigation', function($scope, $state, $stateP
    * User logout.
    */
   $scope.logout = function($event) {
-    // 新增：向5173端口发送登出通知
+    // 新增：向5200端口发送登出通知
     Restangular
     .withConfig(function(RestangularConfigurer) {
-      RestangularConfigurer.setBaseUrl('http://localhost:5173');
+      RestangularConfigurer.setBaseUrl('http://localhost:5200');
     })
     .all('logout-notify')
     .customPOST({
@@ -33,7 +33,7 @@ angular.module('docs').controller('Navigation', function($scope, $state, $stateP
       timestamp: new Date().toISOString()
     });
   
-    
+
     User.logout().then(function() {
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;

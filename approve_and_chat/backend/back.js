@@ -4,7 +4,7 @@ import express from 'express'
 import cors from 'cors'
 
 const app = express()
-const PORT = 5173
+const PORT = 5200
 
 // ✅ 中间件
 app.use(cors())

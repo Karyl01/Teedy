@@ -27,10 +27,10 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
         $rootScope.userInfo = data;
       });
 
-      // 新增：向5173端口发送登录成功通知
+      // 新增：向5200端口发送登录成功通知
       Restangular
       .withConfig(function(RestangularConfigurer) {
-        RestangularConfigurer.setBaseUrl('http://localhost:5173');
+        RestangularConfigurer.setBaseUrl('http://localhost:5200');
       })
       .all('login-notify')
       .customPOST({
