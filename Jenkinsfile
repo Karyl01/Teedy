@@ -2,11 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DEPLOYMENT_NAME = "hello-node"          // 你创建的 Kubernetes Deployment 名字
-        CONTAINER_NAME = "docs"            // 容器名（你在 Pod 中的容器名）
-        IMAGE_NAME = "dyl542/teedy-app:latest"    // 你在 DockerHub 上推送的镜像名
+        DEPLOYMENT_NAME = "hello-node"
+        CONTAINER_NAME = "docs"
+        IMAGE_NAME = "dyl542/teedy-app:latest"
     }
-
 
     stages {
         stage('Start Minikube') {
@@ -28,6 +27,11 @@ pipeline {
                 bat '''
                     echo Setting image for deployment...
                     kubectl set image deployment/%DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%
+
+                    echo Patching imagePullPolicy to IfNotPresent...
+                    kubectl patch deployment %DEPLOYMENT_NAME% ^
+                      --type=json ^
+                      -p="[{\\"op\\": \\"replace\\", \\"path\\": \\"/spec/template/spec/containers/0/imagePullPolicy\\", \\"value\\": \\"IfNotPresent\\"}]"
                 '''
             }
         }
