@@ -14,9 +14,9 @@ pipeline {
                 checkout scmGit(
                     branches: [[name: '*/master']],
                     extensions: [],
-                    userRemoteConfigs: [[url: 'https://github.com/Karyl01/Teedy.git']] // 替换为你的 GitHub 仓库地址
+                    userRemoteConfigs: [[url: 'https://github.com/Karyl01/Teedy.git']]
                 )
-                sh 'mvn -B -DskipTests clean package'
+                bat 'mvn -B -DskipTests clean package'
             }
         }
 
@@ -33,7 +33,7 @@ pipeline {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
                         docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()
-                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest') // 可选：打上 latest 标签
+                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest')
                     }
                 }
             }
@@ -42,14 +42,14 @@ pipeline {
         stage('Run containers') {
             steps {
                 script {
-                    sh 'docker stop teedy-container-8081 || true'
-                    sh 'docker rm teedy-container-8081 || true'
+                    bat 'docker stop teedy-container-8081 || exit 0'
+                    bat 'docker rm teedy-container-8081 || exit 0'
 
-                    docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").run(
-                        '--name teedy-container-8081 -d -p 8081:8080'
-                    )
+                    bat """
+                        docker run --name teedy-container-8081 -d -p 8081:8080 ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}
+                    """
 
-                    sh 'docker ps --filter "name=teedy-container"'
+                    bat 'docker ps --filter "name=teedy-container"'
                 }
             }
         }
