@@ -4,7 +4,7 @@ pipeline {
     environment {
         DEPLOYMENT_NAME = "hello-node"          // 你创建的 Kubernetes Deployment 名字
         CONTAINER_NAME = "docs"            // 容器名（你在 Pod 中的容器名）
-        IMAGE_NAME = "dyl542/teedy-app:v1.0"    // 你在 DockerHub 上推送的镜像名
+        IMAGE_NAME = "dyl542/teedy-app:latest"    // 你在 DockerHub 上推送的镜像名
     }
 
 
