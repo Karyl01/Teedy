@@ -32,9 +32,17 @@ pipeline {
         stage('Upload image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
-                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()
-                        docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest')
+                    withEnv([
+                        'HTTP_PROXY=',
+                        'HTTPS_PROXY=',
+                        'http_proxy=',
+                        'https_proxy=',
+                        'NO_PROXY=localhost,127.0.0.1'
+                    ]) {
+                        docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
+                            docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()
+                            docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest')
+                        }
                     }
                 }
             }
