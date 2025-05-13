@@ -6,6 +6,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS = credentials('1') // Jenkins 中存储的 Docker Hub 凭据 ID
         DOCKER_IMAGE = 'dyl542/teedy-app' // 替换为你的 Docker Hub 用户名/仓库名
         DOCKER_TAG = "${env.BUILD_NUMBER}" // 使用构建编号作为标签
+        DOCKER_CONTEXT = 'default'
     }
 
     stages {
