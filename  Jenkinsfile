@@ -11,11 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                checkout scmGit(
-                    branches: [[name: '*/master']],
-                    extensions: [],
-                    userRemoteConfigs: [[url: 'https://github.com/Karyl01/Teedy.git']] // 替换为你的 GitHub 仓库地址
-                )
+                checkout scm
                 sh 'mvn -B -DskipTests clean package'
             }
         }
