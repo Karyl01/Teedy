@@ -2,64 +2,40 @@ pipeline {
     agent any
 
     environment {
-        // 定义环境变量
-        DOCKER_HUB_CREDENTIALS = credentials('1') // Jenkins 中存储的 Docker Hub 凭据 ID
-        DOCKER_IMAGE = 'dyl542/teedy-app' // 替换为你的 Docker Hub 用户名/仓库名
-        DOCKER_TAG = "${env.BUILD_NUMBER}" // 使用构建编号作为标签
-        DOCKER_CONTEXT = 'default'
+        DEPLOYMENT_NAME = "hello-node"          // 你创建的 Kubernetes Deployment 名字
+        CONTAINER_NAME = "teedy-app"            // 容器名（你在 Pod 中的容器名）
+        IMAGE_NAME = "dyl542/teedy-app:v1.0"    // 你在 DockerHub 上推送的镜像名
     }
 
+
     stages {
-        stage('Build') {
+        stage('Start Minikube') {
             steps {
-                checkout scmGit(
-                    branches: [[name: '*/master']],
-                    extensions: [],
-                    userRemoteConfigs: [[url: 'https://github.com/Karyl01/Teedy.git']]
-                )
-                bat 'mvn -B -DskipTests clean package'
+                bat '''
+                    minikube status | findstr "Running" >nul
+                    if errorlevel 1 (
+                        echo Starting Minikube...
+                        minikube start
+                    ) else (
+                        echo Minikube already running.
+                    )
+                '''
             }
         }
 
-        stage('Building image') {
+        stage('Set Image') {
             steps {
-                script {
-                    docker.build("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
-                }
+                bat '''
+                    echo Setting image for deployment...
+                    kubectl set image deployment/%DEPLOYMENT_NAME% %CONTAINER_NAME%=%IMAGE_NAME%
+                '''
             }
         }
 
-        stage('Upload image') {
+        stage('Verify') {
             steps {
-                script {
-                    withEnv([
-                        'HTTP_PROXY=',
-                        'HTTPS_PROXY=',
-                        'http_proxy=',
-                        'https_proxy=',
-                        'NO_PROXY=localhost,127.0.0.1'
-                    ]) {
-                        docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
-                            docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push()
-                            docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push('latest')
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Run containers') {
-            steps {
-                script {
-                    bat 'docker stop teedy-container-8081 || exit 0'
-                    bat 'docker rm teedy-container-8081 || exit 0'
-
-                    bat """
-                        docker run --name teedy-container-8081 -d -p 8081:8080 ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}
-                    """
-
-                    bat 'docker ps --filter "name=teedy-container"'
-                }
+                bat 'kubectl rollout status deployment/%DEPLOYMENT_NAME%'
+                bat 'kubectl get pods'
             }
         }
     }
